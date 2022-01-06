@@ -294,11 +294,8 @@ class Logger private(val delegate: ExtendedLogger) extends AnyVal {
     * @param marker  the marker data specific to this log statement
     * @param message the message to be logged
     */
-  inline def apply(inline level: Level, inline marker: Marker, inline message: Message): Unit = {
-    if (delegate.isEnabled(level, marker)) {
-      delegate.log(level, marker, message)
-    }
-  }
+  inline def apply(inline level: Level, inline marker: Marker, inline message: Message): Unit =
+    ${LoggerMacro.logMarkerMsg('this, 'level, 'marker, 'message)}
 
   /**
     * Logs a string with the specific `Marker` at the given `Level`.
