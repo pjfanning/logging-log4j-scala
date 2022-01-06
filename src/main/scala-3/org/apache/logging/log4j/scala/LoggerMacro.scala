@@ -387,9 +387,13 @@ private object LoggerMacro {
     '{ if ($underlying.delegate.isEnabled(Level.FATAL, $marker)) $underlying.fatal($marker, $message, $throwable) }
   }
 
-  def logMarkerMsg(underlying: Expr[Logger], level: Expr[Level], marker: Expr[Marker], message: Expr[Message])
-                  (using Quotes): Expr[Unit] = {
-    '{ if ($underlying.delegate.isEnabled($level, $marker)) $underlying.delegate.log($level, $marker, $message) }
+  def logMsg(underlying: Expr[Logger], level: Expr[Level], message: Expr[Message])(using Quotes): Expr[Unit] = {
+    '{ if ($underlying.delegate.isEnabled($level)) $underlying.delegate.log($level, $message) }
+  }
+
+  def logMsgThrowable(underlying: Expr[Logger], level: Expr[Level], message: Expr[Message], throwable: Expr[Throwable])
+                     (using Quotes): Expr[Unit] = {
+    '{ if ($underlying.delegate.isEnabled($level)) $underlying.delegate.log($level, $message, $throwable) }
   }
 
   def logCseq(underlying: Expr[Logger], level: Expr[Level], message: Expr[CharSequence])(using Quotes): Expr[Unit] = {
@@ -401,6 +405,16 @@ private object LoggerMacro {
                        throwable: Expr[Throwable])(using Quotes): Expr[Unit] = {
     val (messageFormat, args) = deconstructInterpolatedMessage(message)
     logMessageArgsThrowable(underlying, level, messageFormat, Expr.ofSeq(args), throwable)
+  }
+
+  def logMarkerMsg(underlying: Expr[Logger], level: Expr[Level], marker: Expr[Marker], message: Expr[Message])
+                  (using Quotes): Expr[Unit] = {
+    '{ if ($underlying.delegate.isEnabled($level, $marker)) $underlying.delegate.log($level, $marker, $message) }
+  }
+
+  def logMarkerMsgThrowable(underlying: Expr[Logger], level: Expr[Level], marker: Expr[Marker], message: Expr[Message], throwable: Expr[Throwable])
+                  (using Quotes): Expr[Unit] = {
+    '{ if ($underlying.delegate.isEnabled($level, $marker)) $underlying.delegate.log($level, $marker, $message, $throwable) }
   }
 
   def logMarkerCseq(underlying: Expr[Logger], level: Expr[Level], marker: Expr[Marker], message: Expr[CharSequence])(using Quotes): Expr[Unit] = {

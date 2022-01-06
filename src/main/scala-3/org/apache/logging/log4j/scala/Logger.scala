@@ -329,11 +329,8 @@ class Logger private(val delegate: ExtendedLogger) extends AnyVal {
     * @param message the message to be logged
     * @param cause   the cause
     */
-  inline def apply(inline level: Level, inline marker: Marker, inline message: Message, inline cause: Throwable): Unit = {
-    if (delegate.isEnabled(level, marker)) {
-      delegate.log(level, marker, message, cause)
-    }
-  }
+  inline def apply(inline level: Level, inline marker: Marker, inline message: Message, inline cause: Throwable): Unit =
+    ${LoggerMacro.logMarkerMsgThrowable('this, 'level, 'marker, 'message, 'cause)}
 
   /**
     * Logs a string with the specific `Marker` at the given `Level` including the stack trace
@@ -368,11 +365,8 @@ class Logger private(val delegate: ExtendedLogger) extends AnyVal {
     * @param level   the logging level
     * @param message the message to be logged
     */
-  inline def apply(inline level: Level, inline message: Message): Unit = {
-    if (delegate.isEnabled(level)) {
-      delegate.log(level, message)
-    }
-  }
+  inline def apply(inline level: Level, inline message: Message): Unit =
+    ${LoggerMacro.logMsg('this, 'level, 'message)}
 
   /**
     * Logs a string at the given `Level`.
@@ -402,11 +396,8 @@ class Logger private(val delegate: ExtendedLogger) extends AnyVal {
     * @param message the message to be logged
     * @param cause   a `Throwable`
     */
-  inline def apply(inline level: Level, inline message: Message, inline cause: Throwable): Unit = {
-    if (delegate.isEnabled(level)) {
-      delegate.log(level, message, cause)
-    }
-  }
+  inline def apply(inline level: Level, inline message: Message, inline cause: Throwable): Unit =
+    ${LoggerMacro.logMsgThrowable('this, 'level, 'message, 'cause)}
 
   /**
     * Logs a string at the given `Level` including the stack trace of the given `Throwable`.
