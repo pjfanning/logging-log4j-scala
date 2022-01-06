@@ -396,6 +396,15 @@ private object LoggerMacro {
     '{ if ($underlying.delegate.isEnabled($level)) $underlying.delegate.log($level, $message, $throwable) }
   }
 
+  def logObject(underlying: Expr[Logger], level: Expr[Level], message: Expr[AnyRef])(using Quotes): Expr[Unit] = {
+    '{ if ($underlying.delegate.isEnabled($level)) $underlying.delegate.log($level, $message) }
+  }
+
+  def logObjectThrowable(underlying: Expr[Logger], level: Expr[Level], message: Expr[AnyRef],
+                         throwable: Expr[Throwable])(using Quotes): Expr[Unit] = {
+    '{ if ($underlying.delegate.isEnabled($level)) $underlying.delegate.log($level, $message, $throwable) }
+  }
+
   def logCseq(underlying: Expr[Logger], level: Expr[Level], message: Expr[CharSequence])(using Quotes): Expr[Unit] = {
     val (messageFormat, args) = deconstructInterpolatedMessage(message)
     logMessageArgs(underlying, level, messageFormat, Expr.ofSeq(args))
@@ -414,6 +423,16 @@ private object LoggerMacro {
 
   def logMarkerMsgThrowable(underlying: Expr[Logger], level: Expr[Level], marker: Expr[Marker], message: Expr[Message], throwable: Expr[Throwable])
                   (using Quotes): Expr[Unit] = {
+    '{ if ($underlying.delegate.isEnabled($level, $marker)) $underlying.delegate.log($level, $marker, $message, $throwable) }
+  }
+
+  def logMarkerObject(underlying: Expr[Logger], level: Expr[Level], marker: Expr[Marker], message: Expr[AnyRef])
+                     (using Quotes): Expr[Unit] = {
+    '{ if ($underlying.delegate.isEnabled($level, $marker)) $underlying.delegate.log($level, $marker, $message) }
+  }
+
+  def logMarkerObjectThrowable(underlying: Expr[Logger], level: Expr[Level], marker: Expr[Marker], message: Expr[AnyRef],
+                               throwable: Expr[Throwable])(using Quotes): Expr[Unit] = {
     '{ if ($underlying.delegate.isEnabled($level, $marker)) $underlying.delegate.log($level, $marker, $message, $throwable) }
   }
 
