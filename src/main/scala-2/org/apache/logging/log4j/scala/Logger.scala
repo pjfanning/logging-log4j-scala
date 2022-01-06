@@ -432,8 +432,12 @@ class Logger private(val delegate: ExtendedLogger) extends AnyVal {
     * @param params the parameters to the method.
     * @return The built `EntryMessage`
     */
-  def traceEntry(params: AnyRef*): EntryMessage =
-  macro LoggerMacro.traceEntryParams
+  def traceEntry(params: AnyRef*): EntryMessage = {
+    params match {
+      case Seq() => delegate.traceEntry()
+      case seq => delegate.traceEntry(seq.head.toString, seq.tail:_*)
+    }
+  }
 
   /**
     * Logs entry to a method using a `Message` to describe the parameters.
@@ -449,7 +453,7 @@ class Logger private(val delegate: ExtendedLogger) extends AnyVal {
     * @return The built `EntryMessage`
     */
   def traceEntry(message: Message): EntryMessage =
-  macro LoggerMacro.traceEntryMessage
+    delegate.traceEntry(message)
 
   /**
     * Logs exit from a method with no result.

@@ -16,8 +16,7 @@
  */
 package org.apache.logging.log4j.scala
 
-import org.apache.logging.log4j.message.{EntryMessage, Message}
-import org.apache.logging.log4j.spi.AbstractLogger
+import org.apache.logging.log4j.message.Message
 import org.apache.logging.log4j.{Level, Marker}
 
 import scala.language.experimental.macros
@@ -337,32 +336,4 @@ private object LoggerMacro {
       }
     )
 
-  def traceEntryParams(c: LoggerContext)(params: c.Expr[AnyRef]*): c.Expr[EntryMessage] = {
-    import c.universe._
-    val isEnabled = Apply(
-      Select(Select(c.prefix.tree, TermName("delegate")), TermName("isEnabled")),
-      List(
-        reify(Level.TRACE).tree,
-        reify(AbstractLogger.ENTRY_MARKER).tree,
-        reify(null: AnyRef).tree,
-        reify(null).tree
-      )
-    )
-
-    val log = Apply(
-      Select(Select(c.prefix.tree, TermName("delegate")), TermName("traceEntry")),
-      reify(null: String).tree :: (params map (_.tree)).toList
-    )
-    c.Expr[EntryMessage](If(isEnabled, log, reify(null).tree))
-  }
-
-
-  def traceEntryMessage(c: LoggerContext)(message: c.Expr[Message]): c.Expr[EntryMessage] =
-    c.universe.reify(
-      if (c.prefix.splice.delegate.isEnabled(Level.TRACE, AbstractLogger.ENTRY_MARKER, null: AnyRef, null)) {
-        c.prefix.splice.delegate.traceEntry(message.splice)  // TODO should not do ifEnabled check
-      } else {
-        null
-      }
-    )
 }
